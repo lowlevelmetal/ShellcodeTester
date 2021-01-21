@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <sys/mman.h>
 
 #define ERR(x) ( fprintf(stderr, "%s\n", x) )
 #define UNUSED(x) ( (void)(x) )
@@ -18,8 +19,8 @@ convert_fromescape_hex(const char *original_str) {
     uint str_length = ((uint)strlen(original_str) / 3) + 1;
     char num[3] = "\x00\x00\x00";
 
-    char *new_str = (char *)malloc(str_length);
-    if(new_str == NULL) {
+    char *new_str = (char *)mmap(NULL, str_length, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    if(new_str == MAP_FAILED) {
         ERR("Not enough memory!");
         return NULL;
     }
